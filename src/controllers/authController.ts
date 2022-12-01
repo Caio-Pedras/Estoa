@@ -20,8 +20,9 @@ export async function postLogin(req: Request, res: Response) {
 }
 
 export async function getUserById(req: Request, res: Response) {
+  const { userId } = res.locals.tokenInfo;
   const { id } = req.params;
-  const user = await getUser(Number(id));
+  const user = await getUser(Number(id), Number(userId));
   return res.status(200).send(user);
 }
 
