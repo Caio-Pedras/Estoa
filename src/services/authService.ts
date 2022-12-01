@@ -41,10 +41,20 @@ export async function login(user: LoginUserData) {
   return token;
 }
 
-export async function getUser(id: number) {
-  const user = await findUserById(id);
-  if (!user) throw notFoundError("User not found");
-  return user;
+export async function getUser(id: number, userId: number) {
+  const loggedUser = await findUserById(userId);
+  if (!loggedUser) throw notFoundError("you must be logged");
+
+  if (userId === id || loggedUser.type) {
+    const user: Partial<User> | null = await findUserById(id);
+    if (!user) throw notFoundError("User not found");
+    delete user.password;
+    return user;
+  } else {
+    throw unauthorizedError(
+      "You do not have permission to access this information"
+    );
+  }
 }
 export async function updateUser(
   id: number,
@@ -60,7 +70,9 @@ export async function updateUser(
   }
 
   if (user.id === id || user.type) {
-    return await updateUserById(id, userData);
+    const updatedUser: Partial<User> = await updateUserById(id, userData);
+    delete updatedUser.password;
+    return updatedUser;
   } else {
     throw unauthorizedError("You are not allowed to make this change.");
   }
