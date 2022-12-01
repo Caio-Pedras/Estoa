@@ -16,7 +16,7 @@ const authRouter = Router();
 
 authRouter.post("/users", schemaValidator(authSchema), postNewUser);
 authRouter.post("/users/login", schemaValidator(loginSchema), postLogin);
-authRouter.get("/users/:id", getUserById);
+authRouter.get("/users/:id", tokenValidator, getUserById);
 authRouter.put(
   "/users/:id",
   schemaValidator(updateAuthSchema),
